@@ -4,8 +4,11 @@ from pydantic import BaseModel
 from typing import List, Optional
 import json
 import os
+from routers import pdf_export
 
 app = FastAPI()
+
+app.include_router(pdf_export.router, prefix="/api", tags=["export"])
 
 # Configure CORS
 app.add_middleware(

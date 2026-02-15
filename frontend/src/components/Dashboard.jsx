@@ -4,6 +4,7 @@ import axios from 'axios';
 import DataGrid from './DataGrid';
 import FilterBar from './FilterBar';
 import SkillsMatrix from './SkillsMatrix'; // Import new component
+import PdfExportButton from './PdfExportButton'; // Import PDF Export Button
 import { LogOut, User, Database, LayoutGrid, Table as TableIcon } from 'lucide-react';
 
 const Dashboard = () => {
@@ -184,6 +185,10 @@ const Dashboard = () => {
                     </h2>
 
                     <div className="flex gap-3">
+                        <PdfExportButton
+                            data={filteredData}
+                            filters={filters}
+                        />
                         {!isMatrixView && (
                             <button
                                 onClick={() => setIsAdminView(!isAdminView)}

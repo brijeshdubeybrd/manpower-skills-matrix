@@ -103,24 +103,8 @@ def verify_otp(request: VerifyOtpRequest):
 
 @app.post("/api/reset-data")
 def reset_data():
-    # In a real scenario, this would restore from a backup.
-    # For now, we'll just re-run the generation script logic if needed, 
-    # OR you can keep a "mock_db_original.json" to copy from.
-    # Here we will just keep the current state or implement regeneration if strictly needed.
-    # For simplicity in this JSON refactor, let's assume reset is a "no-op" or re-load 
-    # unless we want to regenerate. Let's regenerate to be safe.
-    import generate_json
-    generate_json.generate_mock_data(60) # Re-run generation
-    # We need to reload the modules or just re-run the script logic. 
-    # Since generate_json is a script, we can run it via os.system or import function.
-    # Let's use the subprocess or just write the file again.
-    
-    # Re-writing default data
-    from generate_json import generate_mock_data
-    data = generate_mock_data(60)
-    save_db(data)
-    
-    return {"message": "Data reset successfully"}
+    # Data reset is disabled to preserve manual changes in mock_db.json
+    return {"message": "Data reset is disabled to preserve manual changes."}
 
 @app.put("/api/manpower/{record_id}")
 def update_record(record_id: int, updated_record: EmployeeRecord):

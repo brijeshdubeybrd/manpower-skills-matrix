@@ -67,8 +67,9 @@ def generate_mock_data(num_records=60):
         data.append(record)
     return data
 
-data = generate_mock_data(60)
+if __name__ == "__main__":
+    data = generate_mock_data(60)
 
-with open("mock_db.json", "w") as f:
-    json.dump(data, f, indent=4)
-    print("mock_db.json generated successfully.")
+    with open("mock_db.json", "w") as f:
+        json.dump(data, f, indent=4)
+        print("mock_db.json generated successfully.")

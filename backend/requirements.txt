@@ -3,3 +3,7 @@ uvicorn
 pydantic
 reportlab>=4.0.7
 Pillow>=10.1.0
+google-cloud-bigquery
+pandas
+pyarrow
+db-dtypes

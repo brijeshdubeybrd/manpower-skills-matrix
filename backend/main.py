@@ -5,6 +5,7 @@ from typing import List, Optional
 import json
 import os
 from routers import pdf_export
+from db import bq_client
 
 app = FastAPI()
 
@@ -67,15 +68,22 @@ def read_root():
 @app.get("/api/manpower", response_model=List[EmployeeRecord])
 def get_manpower_data():
     try:
-        print("Loading DB...", flush=True)
-        data = load_db()
-        print(f"Loaded {len(data)} records. First record: {data[0] if data else 'None'}", flush=True)
+        print("Fetching data from BigQuery...", flush=True)
+        data = bq_client.get_manpower_data()
+        
+        if not data:
+             # Just log, but don't fallback. Return empty list if BQ is empty.
+             print("BigQuery returned no data.", flush=True)
+             return []
+
+        print(f"Fetched {len(data)} records from BigQuery.", flush=True)
         return data
     except Exception as e:
         print(f"ERROR in get_manpower_data: {e}", flush=True)
         import traceback
         traceback.print_exc()
-        raise e
+        # Raise 500 explicitly so user knows BQ failed
+        raise HTTPException(status_code=500, detail=f"Failed to fetch data from BigQuery: {str(e)}")
 
 @app.post("/api/login")
 def login(request: LoginRequest):
@@ -108,6 +116,13 @@ def reset_data():
 
 @app.put("/api/manpower/{record_id}")
 def update_record(record_id: int, updated_record: EmployeeRecord):
+    # Try BigQuery Update (Mock implementation for now)
+    success = bq_client.update_record(record_id, updated_record.dict())
+    if success:
+         return updated_record
+    
+    # Fallback to local mock DB for editing
+    print("Updating local mock DB as BigQuery update is not fully implemented.", flush=True)
     db = load_db()
     for i, record in enumerate(db):
         if record["id"] == record_id:
@@ -118,6 +133,13 @@ def update_record(record_id: int, updated_record: EmployeeRecord):
 
 @app.delete("/api/manpower/{record_id}")
 def delete_record(record_id: int):
+    # Try BigQuery Delete
+    success = bq_client.delete_record(record_id)
+    if success:
+        return {"message": "Record deleted from BigQuery"}
+
+    # Fallback to local mock DB
+    print("Deleting from local mock DB as BigQuery delete is not fully implemented.", flush=True)
     db = load_db()
     for i, record in enumerate(db):
         if record["id"] == record_id:
